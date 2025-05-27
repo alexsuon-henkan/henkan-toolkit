@@ -31,6 +31,11 @@ const NavItem = ({ item, pathname }) => (
         <span className="ml-1 text-xs font-semibold text-yellow-500">NEW</span>
       </div>
     )}
+    {item.isBeta && (
+      <div className="flex items-center opacity-0 group-hover:opacity-100">
+        <span className="ml-1 text-xs font-semibold text-blue-500 bg-blue-100 px-2 py-1 rounded">BETA</span>
+      </div>
+    )}
   </Link>
 )
 
@@ -50,7 +55,7 @@ const diagramItems = [
   { name: "Sankey Diagram", href: "/sankey-diagram", icon: GitBranch },
 ]
 
-const assistantItems = [{ name: "Method Assistant", href: "/method-assistant", icon: Bot, isNew: true }]
+const assistantItems = [{ name: "Method Assistant", href: "/method-assistant", icon: Bot, isBeta: true }]
 
 const systemItems = [{ name: "Logs", href: "/logs", icon: Clipboard, isNew: true }]
 
