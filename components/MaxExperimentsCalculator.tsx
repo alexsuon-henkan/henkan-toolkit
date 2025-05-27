@@ -11,7 +11,6 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 import { Slider } from "@/components/ui/slider"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 export function MaxExperimentsCalculator() {
   // All the existing state and logic remains the same...
@@ -178,7 +177,7 @@ export function MaxExperimentsCalculator() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="daily-visitors">
+                  <Label htmlFor="daily-visitors" className="mb-4 block">
                     <div className="flex items-center space-x-2">
                       <span>Daily Traffic (visitors)</span>
                       <TooltipProvider>
@@ -200,7 +199,7 @@ export function MaxExperimentsCalculator() {
                 </div>
 
                 <div>
-                  <Label htmlFor="conversion-rate">
+                  <Label htmlFor="conversion-rate" className="mb-4 block">
                     <div className="flex items-center space-x-2">
                       <span>Conversion Rate (%)</span>
                       <TooltipProvider>
@@ -224,7 +223,7 @@ export function MaxExperimentsCalculator() {
                 </div>
 
                 <div>
-                  <Label htmlFor="mde">
+                  <Label htmlFor="mde" className="mb-4 block">
                     <div className="flex items-center space-x-2">
                       <span>Minimum Detectable Effect (%)</span>
                       <TooltipProvider>
@@ -245,7 +244,7 @@ export function MaxExperimentsCalculator() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="confidence-level">
+                  <Label htmlFor="confidence-level" className="mb-4 block">
                     <div className="flex items-center space-x-2">
                       <span>Confidence Level (%)</span>
                       <TooltipProvider>
@@ -269,7 +268,7 @@ export function MaxExperimentsCalculator() {
                 </div>
 
                 <div>
-                  <Label htmlFor="target-power">
+                  <Label htmlFor="target-power" className="mb-4 block">
                     <div className="flex items-center space-x-2">
                       <span>Target Statistical Power (%)</span>
                       <TooltipProvider>
@@ -294,10 +293,9 @@ export function MaxExperimentsCalculator() {
               </div>
 
               <div>
-                <Label htmlFor="parallel-percentage">
+                <Label htmlFor="parallel-percentage" className="mb-4 block">
                   <div className="flex items-center space-x-2">
                     <span>Parallel Tests (%)</span>
-                    <InfoIcon className="h-4 w-4 text-gray-500 cursor-pointer" />
                   </div>
                 </Label>
                 <div className="flex items-center space-x-4">
@@ -507,69 +505,6 @@ export function MaxExperimentsCalculator() {
                 </div>
               ))}
             </dl>
-          </CardContent>
-        </Card>
-
-        <Card className="border-0 shadow-sm mb-8">
-          <CardHeader>
-            <CardTitle className="font-serif text-2xl">Frequently Asked Questions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              {[
-                {
-                  question: "How does this calculator determine the maximum number of experiments?",
-                  answer:
-                    "The calculator uses statistical formulas to determine the sample size needed for each A/B test based on your parameters, then divides your total annual traffic by this sample size to estimate how many tests you can run sequentially. For parallel testing, it applies a multiplier based on your specified percentage.",
-                },
-                {
-                  question: "Why does the number of tests decrease when my MDE decreases?",
-                  answer:
-                    "The smaller the effect you want to detect, the larger sample size you need to detect it with confidence. This is because detecting small changes requires more data to distinguish them from random noise. Therefore, each test requires more traffic, which reduces the total number of tests you can run with your available traffic.",
-                },
-                {
-                  question: "Can I really run tests in parallel without affecting results?",
-                  answer:
-                    "Yes, but only if the tests target different parts of your site, different user segments, or different features that don't interact with each other. For example, you could test homepage design and checkout flow simultaneously, but not two different homepage designs. The key is ensuring no overlap in what's being tested.",
-                },
-                {
-                  question: "What statistical assumptions does this calculator use?",
-                  answer:
-                    "This calculator uses standard statistical assumptions for comparing two proportions, which is appropriate for conversion rate testing. It assumes normal distribution for large samples, uses z-scores for confidence intervals, and applies the standard formula for sample size calculation in A/B testing.",
-                },
-                {
-                  question: "How can I increase my testing capacity?",
-                  answer:
-                    "You can increase testing capacity by: 1) Increasing traffic to your site, 2) Testing larger changes (higher MDE) that require smaller sample sizes, 3) Accepting slightly lower confidence or power for some tests, 4) Running tests in parallel on different site areas, or 5) Focusing tests on higher-converting user segments.",
-                },
-                {
-                  question: "Should I account for seasonality in my testing plan?",
-                  answer:
-                    "Yes, this calculator uses constant average daily traffic, but in practice you should account for seasonal variations. Avoid launching tests during atypical periods like holidays, major promotions, or known traffic spikes. Consider running tests during stable periods and plan your testing calendar around seasonal patterns.",
-                },
-                {
-                  question: "What's the relationship between MDE and false negative risk?",
-                  answer:
-                    "There's an inverse relationship: as MDE increases (larger effects), false negative risk decreases (less likely to miss real effects). This is because larger effects are easier to detect with the same sample size. The chart in the calculator visualizes this relationship for your specific parameters.",
-                },
-                {
-                  question: "How do I choose the right confidence level and statistical power?",
-                  answer:
-                    "Industry standards are 95% confidence level and 80% statistical power. Higher confidence (99%) reduces false positives but requires larger sample sizes. Higher power (90%) reduces false negatives but also requires larger samples. Choose based on the cost of making wrong decisions in your specific context.",
-                },
-              ].map((item, index) => (
-                <AccordionItem
-                  value={`item-${index + 1}`}
-                  key={index}
-                  className="border-b border-gray-200 last:border-b-0"
-                >
-                  <AccordionTrigger className="text-left font-medium text-gray-700 hover:text-[#4CAF50]">
-                    {item.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-600">{item.answer}</AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
           </CardContent>
         </Card>
       </div>

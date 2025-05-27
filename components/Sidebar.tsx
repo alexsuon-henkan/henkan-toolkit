@@ -2,7 +2,17 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BarChart2, Calculator, TrendingUp, DollarSign, GitBranch, BarChart, Sparkles, Clipboard } from "lucide-react"
+import {
+  BarChart2,
+  Calculator,
+  TrendingUp,
+  DollarSign,
+  GitBranch,
+  BarChart,
+  Sparkles,
+  Clipboard,
+  Bot,
+} from "lucide-react"
 
 const NavItem = ({ item, pathname }) => (
   <Link
@@ -40,6 +50,8 @@ const diagramItems = [
   { name: "Sankey Diagram", href: "/sankey-diagram", icon: GitBranch },
 ]
 
+const assistantItems = [{ name: "Method Assistant", href: "/method-assistant", icon: Bot, isNew: true }]
+
 const systemItems = [{ name: "Logs", href: "/logs", icon: Clipboard, isNew: true }]
 
 export function Sidebar() {
@@ -63,6 +75,15 @@ export function Sidebar() {
               Diagrams
             </span>
             {diagramItems.map((item) => (
+              <NavItem key={item.name} item={item} pathname={pathname} />
+            ))}
+
+            <Divider className="my-3 mx-4 group-hover:opacity-100 opacity-0 transition-opacity" />
+
+            <span className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider opacity-0 group-hover:opacity-100 block mb-2">
+              Assistants
+            </span>
+            {assistantItems.map((item) => (
               <NavItem key={item.name} item={item} pathname={pathname} />
             ))}
 

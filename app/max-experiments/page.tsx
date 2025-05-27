@@ -1,5 +1,4 @@
 import { MaxExperimentsCalculator } from "@/components/MaxExperimentsCalculator"
-import { MaxExperimentsFAQModal } from "@/components/MaxExperimentsFAQModal"
 import { generateMetadata } from "@/components/SEO"
 
 export const metadata = generateMetadata({
@@ -17,9 +16,6 @@ export default function MaxExperimentsPage() {
           <p className="text-gray-600 text-lg mb-6">
             Determine how many A/B tests you can run each year based on your traffic and statistical requirements
           </p>
-          <div className="flex justify-center gap-4">
-            <MaxExperimentsFAQModal />
-          </div>
         </div>
 
         <MaxExperimentsCalculator />
