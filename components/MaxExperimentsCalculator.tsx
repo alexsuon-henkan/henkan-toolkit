@@ -12,7 +12,6 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/comp
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts"
 import { Slider } from "@/components/ui/slider"
-// import { MaxExperimentsFAQModal } from "@/components/MaxExperimentsFAQModal"
 
 export function MaxExperimentsCalculator() {
   // Input parameters
@@ -72,21 +71,14 @@ export function MaxExperimentsCalculator() {
     const maxTests = Math.floor(yearlyVisitors / totalSampleSize)
 
     // Calculate max tests with parallel testing
-    // If parallelPercentage is 0, this will be the same as maxTests
-    // If parallelPercentage is 100, this would theoretically be infinite, but we cap it at a reasonable multiple
     let maxTestsWithParallel = maxTests
 
     if (parallelPercentage > 0) {
-      // Calculate the parallel testing multiplier
-      // This is a simplified model that assumes tests can run in parallel without interference
-      // The formula gives a reasonable approximation that increases as the parallel percentage increases
-      // but with diminishing returns to reflect the practical limitations
       const parallelFactor = 1 + parallelPercentage / 100
       maxTestsWithParallel = Math.floor(maxTests * parallelFactor)
     }
 
-    // Now calculate the achieved power and false negative risk based on the MDE
-    // This shows how the MDE affects the false negative risk
+    // Calculate the achieved power and false negative risk based on the MDE
     const standardizedEffect = Math.abs(p2 - p1) / Math.sqrt((pAvg * (1 - pAvg) * 2) / calculatedSampleSizePerVariant)
     const calculatedPower = calculatePower(standardizedEffect, alpha)
     const calculatedFalseNegativeRisk = 100 - calculatedPower * 100
@@ -112,7 +104,6 @@ export function MaxExperimentsCalculator() {
   // Generate data for the MDE vs False Negative Risk chart
   const generateMdeChartData = (sampleSizePerVariant: number, baseConversionRate: number, alpha: number) => {
     const chartData = []
-    // Generate data points for MDEs ranging from 1% to 30%
     for (let mdePct = 1; mdePct <= 30; mdePct++) {
       const p1 = baseConversionRate
       const p2 = p1 * (1 + mdePct / 100)
@@ -138,21 +129,17 @@ export function MaxExperimentsCalculator() {
 
   // Function to get z-score for a given probability
   const getZScore = (probability: number): number => {
-    // Approximation of the inverse of the standard normal CDF
-    // This is a simplified version and works well for common values
-    if (probability === 0.975) return 1.96 // 95% confidence
-    if (probability === 0.95) return 1.645 // 90% confidence
-    if (probability === 0.9) return 1.28 // 80% confidence
-    if (probability === 0.8) return 0.84 // 80% power
+    if (probability === 0.975) return 1.96
+    if (probability === 0.95) return 1.645
+    if (probability === 0.9) return 1.28
+    if (probability === 0.8) return 0.84
 
-    // For other values, use this approximation
     const a = Math.sqrt(-2 * Math.log(1 - probability))
     return a - (2.30753 + 0.27061 * a) / (1 + 0.99229 * a + 0.04481 * a * a)
   }
 
   // Function to calculate the cumulative distribution function of the standard normal distribution
   const normalCDF = (x: number): number => {
-    // Approximation of the standard normal CDF
     const t = 1 / (1 + 0.2316419 * Math.abs(x))
     const d = 0.3989423 * Math.exp((-x * x) / 2)
     const probability = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))))
@@ -178,7 +165,6 @@ export function MaxExperimentsCalculator() {
     const newConfidenceLevel = Number(e.target.value)
     setConfidenceLevel(newConfidenceLevel)
 
-    // Update false positive risk immediately
     const alpha = (100 - newConfidenceLevel) / 100
     setFalsePositiveRisk(alpha * 100)
   }
@@ -192,9 +178,18 @@ export function MaxExperimentsCalculator() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white p-2 border border-gray-200 rounded shadow-sm text-sm">
-          <p className="font-medium">MDE: {label}%</p>
-          <p>False Negative Risk: {payload[0].value.toFixed(1)}%</p>
+        <div
+          style={{
+            backgroundColor: "white",
+            padding: "8px",
+            border: "1px solid #e5e7eb",
+            borderRadius: "6px",
+            boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.1)",
+            fontSize: "14px",
+          }}
+        >
+          <p style={{ fontWeight: "500", margin: 0 }}>MDE: {label}%</p>
+          <p style={{ margin: 0 }}>False Negative Risk: {payload[0].value.toFixed(1)}%</p>
         </div>
       )
     }
@@ -202,22 +197,38 @@ export function MaxExperimentsCalculator() {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 gap-8">
-        <Card className="border-0 shadow-md">
-          <CardHeader className="pb-3 bg-white rounded-t-lg">
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "32px" }}>
+        <Card style={{ border: "none", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}>
+          <CardHeader
+            style={{
+              paddingBottom: "12px",
+              backgroundColor: "white",
+              borderTopLeftRadius: "8px",
+              borderTopRightRadius: "8px",
+            }}
+          >
             <CardTitle>Input Parameters</CardTitle>
           </CardHeader>
-          <CardContent className="bg-white rounded-b-lg pt-6">
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="space-y-3">
-                  <Label htmlFor="daily-visitors" className="flex items-center gap-2">
+          <CardContent
+            style={{
+              backgroundColor: "white",
+              borderBottomLeftRadius: "8px",
+              borderBottomRightRadius: "8px",
+              paddingTop: "24px",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+              <div
+                style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "32px" }}
+              >
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <Label htmlFor="daily-visitors" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     Daily Traffic (visitors)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <InfoIcon className="h-4 w-4 text-gray-400" />
+                          <InfoIcon style={{ height: "16px", width: "16px", color: "#9ca3af" }} />
                         </TooltipTrigger>
                         <TooltipContent>The average number of unique visitors per day to your site</TooltipContent>
                       </Tooltip>
@@ -231,13 +242,13 @@ export function MaxExperimentsCalculator() {
                   />
                 </div>
 
-                <div className="space-y-3">
-                  <Label htmlFor="conversion-rate" className="flex items-center gap-2">
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <Label htmlFor="conversion-rate" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     Conversion Rate (%)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <InfoIcon className="h-4 w-4 text-gray-400" />
+                          <InfoIcon style={{ height: "16px", width: "16px", color: "#9ca3af" }} />
                         </TooltipTrigger>
                         <TooltipContent>Your current conversion rate before testing</TooltipContent>
                       </Tooltip>
@@ -251,13 +262,13 @@ export function MaxExperimentsCalculator() {
                   />
                 </div>
 
-                <div className="space-y-3">
-                  <Label htmlFor="mde" className="flex items-center gap-2">
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <Label htmlFor="mde" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     Minimum Detectable Effect (%)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <InfoIcon className="h-4 w-4 text-gray-400" />
+                          <InfoIcon style={{ height: "16px", width: "16px", color: "#9ca3af" }} />
                         </TooltipTrigger>
                         <TooltipContent>
                           The smallest relative change in conversion rate that you want to be able to detect
@@ -269,14 +280,16 @@ export function MaxExperimentsCalculator() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-3">
-                  <Label htmlFor="confidence-level" className="flex items-center gap-2">
+              <div
+                style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "32px" }}
+              >
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <Label htmlFor="confidence-level" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     Confidence Level (%)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <InfoIcon className="h-4 w-4 text-gray-400" />
+                          <InfoIcon style={{ height: "16px", width: "16px", color: "#9ca3af" }} />
                         </TooltipTrigger>
                         <TooltipContent>
                           How confident you want to be that your results are not due to chance (typically 95%)
@@ -292,13 +305,13 @@ export function MaxExperimentsCalculator() {
                   />
                 </div>
 
-                <div className="space-y-3">
-                  <Label htmlFor="target-power" className="flex items-center gap-2">
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <Label htmlFor="target-power" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     Target Statistical Power (%)
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
-                          <InfoIcon className="h-4 w-4 text-gray-400" />
+                          <InfoIcon style={{ height: "16px", width: "16px", color: "#9ca3af" }} />
                         </TooltipTrigger>
                         <TooltipContent>
                           The target probability of detecting a true effect if one exists (typically 80%)
@@ -315,13 +328,13 @@ export function MaxExperimentsCalculator() {
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <Label htmlFor="parallel-percentage" className="flex items-center gap-2">
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <Label htmlFor="parallel-percentage" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                   Parallel Tests (%)
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
-                        <InfoIcon className="h-4 w-4 text-gray-400" />
+                        <InfoIcon style={{ height: "16px", width: "16px", color: "#9ca3af" }} />
                       </TooltipTrigger>
                       <TooltipContent>
                         Percentage of tests that can be run in parallel on different parts of the site
@@ -329,7 +342,7 @@ export function MaxExperimentsCalculator() {
                     </Tooltip>
                   </TooltipProvider>
                 </Label>
-                <div className="flex items-center gap-4">
+                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
                   <Slider
                     id="parallel-percentage"
                     value={[parallelPercentage]}
@@ -337,21 +350,21 @@ export function MaxExperimentsCalculator() {
                     max={100}
                     step={5}
                     onValueChange={handleParallelChange}
-                    className="flex-1"
+                    style={{ flex: 1 }}
                   />
-                  <span className="w-12 text-right">{parallelPercentage}%</span>
+                  <span style={{ width: "48px", textAlign: "right" }}>{parallelPercentage}%</span>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                <p style={{ fontSize: "12px", color: "#6b7280", marginTop: "8px", margin: 0 }}>
                   0% = sequential tests only, 100% = all tests can be run in parallel
                 </p>
               </div>
 
-              <div className="flex justify-end">
-                <Button onClick={calculateMaxExperiments} className="px-8">
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button onClick={calculateMaxExperiments} style={{ paddingLeft: "32px", paddingRight: "32px" }}>
                   Calculate
                 </Button>
               </div>
-              <div className="text-xs text-gray-500 text-right">
+              <div style={{ fontSize: "12px", color: "#6b7280", textAlign: "right" }}>
                 Click "Calculate" after changing values to update results
               </div>
             </div>
@@ -360,73 +373,177 @@ export function MaxExperimentsCalculator() {
 
         {maxExperiments !== null && (
           <>
-            <Card className="border-0 shadow-md">
-              <CardHeader className="pb-3 bg-white rounded-t-lg">
+            <Card style={{ border: "none", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}>
+              <CardHeader
+                style={{
+                  paddingBottom: "12px",
+                  backgroundColor: "white",
+                  borderTopLeftRadius: "8px",
+                  borderTopRightRadius: "8px",
+                }}
+              >
                 <CardTitle>Results</CardTitle>
               </CardHeader>
-              <CardContent className="bg-white rounded-b-lg pt-6">
-                <div className="space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-gray-100 p-8 rounded-lg text-center">
-                      <h3 className="text-lg font-medium mb-3">Sequential A/B Tests Per Year</h3>
-                      <p className="text-4xl font-bold">{maxExperiments}</p>
-                      <p className="text-sm text-gray-500 mt-3">Tests run one after another</p>
+              <CardContent
+                style={{
+                  backgroundColor: "white",
+                  borderBottomLeftRadius: "8px",
+                  borderBottomRightRadius: "8px",
+                  paddingTop: "24px",
+                }}
+              >
+                <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                      gap: "32px",
+                    }}
+                  >
+                    <div
+                      style={{ backgroundColor: "#f3f4f6", padding: "32px", borderRadius: "8px", textAlign: "center" }}
+                    >
+                      <h3 style={{ fontSize: "18px", fontWeight: "500", marginBottom: "12px", margin: 0 }}>
+                        Sequential A/B Tests Per Year
+                      </h3>
+                      <p style={{ fontSize: "36px", fontWeight: "bold", margin: "12px 0" }}>{maxExperiments}</p>
+                      <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "12px", margin: 0 }}>
+                        Tests run one after another
+                      </p>
                     </div>
 
-                    <div className="bg-gray-100 p-8 rounded-lg text-center">
-                      <h3 className="text-lg font-medium mb-3">A/B Tests With Parallelization</h3>
-                      <p className="text-4xl font-bold">{maxParallelExperiments}</p>
-                      <p className="text-sm text-gray-500 mt-3">With {parallelPercentage}% parallel tests</p>
+                    <div
+                      style={{ backgroundColor: "#f3f4f6", padding: "32px", borderRadius: "8px", textAlign: "center" }}
+                    >
+                      <h3 style={{ fontSize: "18px", fontWeight: "500", marginBottom: "12px", margin: 0 }}>
+                        A/B Tests With Parallelization
+                      </h3>
+                      <p style={{ fontSize: "36px", fontWeight: "bold", margin: "12px 0" }}>{maxParallelExperiments}</p>
+                      <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "12px", margin: 0 }}>
+                        With {parallelPercentage}% parallel tests
+                      </p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-gray-100 p-8 rounded-lg">
-                      <h4 className="font-medium mb-3">Sample Size Required</h4>
-                      <p className="text-2xl font-semibold">{sampleSize ? formatNumber(sampleSize) : "-"}</p>
-                      <p className="text-sm text-gray-500 mt-3">Total visitors needed per test</p>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                      gap: "32px",
+                    }}
+                  >
+                    <div style={{ backgroundColor: "#f3f4f6", padding: "32px", borderRadius: "8px" }}>
+                      <h4 style={{ fontWeight: "500", marginBottom: "12px", margin: 0 }}>Sample Size Required</h4>
+                      <p style={{ fontSize: "24px", fontWeight: "600", margin: "12px 0" }}>
+                        {sampleSize ? formatNumber(sampleSize) : "-"}
+                      </p>
+                      <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "12px", margin: 0 }}>
+                        Total visitors needed per test
+                      </p>
                     </div>
-                    <div className="bg-gray-100 p-8 rounded-lg">
-                      <h4 className="font-medium mb-3">Annual Traffic</h4>
-                      <p className="text-2xl font-semibold">{annualVisitors ? formatNumber(annualVisitors) : "-"}</p>
-                      <p className="text-sm text-gray-500 mt-3">Total visitors per year</p>
+                    <div style={{ backgroundColor: "#f3f4f6", padding: "32px", borderRadius: "8px" }}>
+                      <h4 style={{ fontWeight: "500", marginBottom: "12px", margin: 0 }}>Annual Traffic</h4>
+                      <p style={{ fontSize: "24px", fontWeight: "600", margin: "12px 0" }}>
+                        {annualVisitors ? formatNumber(annualVisitors) : "-"}
+                      </p>
+                      <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "12px", margin: 0 }}>
+                        Total visitors per year
+                      </p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="bg-gray-100 p-8 rounded-lg">
-                      <h4 className="font-medium mb-3">False Positive Risk</h4>
-                      <p className="text-2xl font-semibold">{falsePositiveRisk.toFixed(1)}%</p>
-                      <p className="text-sm text-gray-500 mt-3">Risk of detecting an effect that doesn't exist</p>
-                      <p className="text-xs text-gray-500 mt-3 italic">Based on confidence level only</p>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                      gap: "32px",
+                    }}
+                  >
+                    <div style={{ backgroundColor: "#f3f4f6", padding: "32px", borderRadius: "8px" }}>
+                      <h4 style={{ fontWeight: "500", marginBottom: "12px", margin: 0 }}>False Positive Risk</h4>
+                      <p style={{ fontSize: "24px", fontWeight: "600", margin: "12px 0" }}>
+                        {falsePositiveRisk.toFixed(1)}%
+                      </p>
+                      <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "12px", margin: 0 }}>
+                        Risk of detecting an effect that doesn't exist
+                      </p>
+                      <p
+                        style={{
+                          fontSize: "12px",
+                          color: "#6b7280",
+                          marginTop: "12px",
+                          fontStyle: "italic",
+                          margin: 0,
+                        }}
+                      >
+                        Based on confidence level only
+                      </p>
                     </div>
-                    <div className="bg-gray-100 p-8 rounded-lg">
-                      <h4 className="font-medium mb-3">False Negative Risk</h4>
-                      <p className="text-2xl font-semibold">{falseNegativeRisk.toFixed(1)}%</p>
-                      <p className="text-sm text-gray-500 mt-3">Risk of missing a real effect of size {mde}%</p>
-                      <p className="text-xs text-gray-500 mt-3 italic">Changes with MDE and sample size</p>
+                    <div style={{ backgroundColor: "#f3f4f6", padding: "32px", borderRadius: "8px" }}>
+                      <h4 style={{ fontWeight: "500", marginBottom: "12px", margin: 0 }}>False Negative Risk</h4>
+                      <p style={{ fontSize: "24px", fontWeight: "600", margin: "12px 0" }}>
+                        {falseNegativeRisk.toFixed(1)}%
+                      </p>
+                      <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "12px", margin: 0 }}>
+                        Risk of missing a real effect of size {mde}%
+                      </p>
+                      <p
+                        style={{
+                          fontSize: "12px",
+                          color: "#6b7280",
+                          marginTop: "12px",
+                          fontStyle: "italic",
+                          margin: 0,
+                        }}
+                      >
+                        Changes with MDE and sample size
+                      </p>
                     </div>
-                    <div className="bg-gray-100 p-8 rounded-lg">
-                      <h4 className="font-medium mb-3">Expected False Positives</h4>
-                      <p className="text-2xl font-semibold">
+                    <div style={{ backgroundColor: "#f3f4f6", padding: "32px", borderRadius: "8px" }}>
+                      <h4 style={{ fontWeight: "500", marginBottom: "12px", margin: 0 }}>Expected False Positives</h4>
+                      <p style={{ fontSize: "24px", fontWeight: "600", margin: "12px 0" }}>
                         {annualFalsePositives ? formatDecimal(annualFalsePositives) : "-"}
                       </p>
-                      <p className="text-sm text-gray-500 mt-3">Expected false positives per year</p>
+                      <p style={{ fontSize: "14px", color: "#6b7280", marginTop: "12px", margin: 0 }}>
+                        Expected false positives per year
+                      </p>
                     </div>
                   </div>
 
                   <Accordion type="single" collapsible>
                     <AccordionItem value="calculations">
-                      <AccordionTrigger className="px-6 py-4 bg-gray-100 rounded-lg hover:bg-gray-200">
+                      <AccordionTrigger style={{ padding: "24px", backgroundColor: "#f3f4f6", borderRadius: "8px" }}>
                         View Detailed Calculations
                       </AccordionTrigger>
                       <AccordionContent>
-                        <div className="space-y-8 p-8 bg-white rounded-lg text-sm mt-4 border border-gray-200">
+                        <div
+                          style={{
+                            padding: "32px",
+                            backgroundColor: "white",
+                            borderRadius: "8px",
+                            fontSize: "14px",
+                            marginTop: "16px",
+                            border: "1px solid #e5e7eb",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "32px",
+                          }}
+                        >
                           <div>
-                            <h4 className="font-medium mb-4">Step 1: Calculate Required Sample Size</h4>
-                            <div className="pl-6 border-l-2 border-gray-200">
-                              <p className="mb-3">Statistical Parameters:</p>
-                              <ul className="list-disc pl-5 space-y-2">
+                            <h4 style={{ fontWeight: "500", marginBottom: "16px", margin: 0 }}>
+                              Step 1: Calculate Required Sample Size
+                            </h4>
+                            <div style={{ paddingLeft: "24px", borderLeft: "2px solid #e5e7eb" }}>
+                              <p style={{ marginBottom: "12px", margin: 0 }}>Statistical Parameters:</p>
+                              <ul
+                                style={{
+                                  listStyleType: "disc",
+                                  paddingLeft: "20px",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: "8px",
+                                }}
+                              >
                                 <li>
                                   Confidence Level: {confidenceLevel}% (α = {falsePositiveRisk.toFixed(1)}%)
                                 </li>
@@ -442,30 +559,48 @@ export function MaxExperimentsCalculator() {
                                 <li>Minimum Detectable Effect: {mde}% relative change</li>
                               </ul>
 
-                              <p className="mt-6 mb-3">Formula:</p>
-                              <div className="bg-gray-100 p-4 rounded border border-gray-200 font-mono text-xs">
+                              <p style={{ marginTop: "24px", marginBottom: "12px", margin: 0 }}>Formula:</p>
+                              <div
+                                style={{
+                                  backgroundColor: "#f3f4f6",
+                                  padding: "16px",
+                                  borderRadius: "6px",
+                                  border: "1px solid #e5e7eb",
+                                  fontFamily: "monospace",
+                                  fontSize: "12px",
+                                }}
+                              >
                                 n = ((z_α + z_β)² × p_avg × (1 - p_avg) × 2) / (p₂ - p₁)²
                               </div>
-                              <p className="text-xs mt-3 text-gray-500">
+                              <p style={{ fontSize: "12px", marginTop: "12px", color: "#6b7280", margin: 0 }}>
                                 Where n is sample size per variant, p₁ is baseline conversion rate, p₂ is expected
                                 conversion rate with change, and p_avg is their average
                               </p>
 
-                              <p className="mt-6 mb-3">Calculation:</p>
-                              <div className="bg-gray-100 p-4 rounded border border-gray-200">
-                                <p>p₁ = {(conversionRate / 100).toFixed(4)}</p>
-                                <p>p₂ = {((conversionRate / 100) * (1 + mde / 100)).toFixed(4)}</p>
-                                <p>
+                              <p style={{ marginTop: "24px", marginBottom: "12px", margin: 0 }}>Calculation:</p>
+                              <div
+                                style={{
+                                  backgroundColor: "#f3f4f6",
+                                  padding: "16px",
+                                  borderRadius: "6px",
+                                  border: "1px solid #e5e7eb",
+                                }}
+                              >
+                                <p style={{ margin: 0 }}>p₁ = {(conversionRate / 100).toFixed(4)}</p>
+                                <p style={{ margin: 0 }}>
+                                  p₂ = {((conversionRate / 100) * (1 + mde / 100)).toFixed(4)}
+                                </p>
+                                <p style={{ margin: 0 }}>
                                   p_avg ={" "}
                                   {((conversionRate / 100 + (conversionRate / 100) * (1 + mde / 100)) / 2).toFixed(4)}
                                 </p>
-                                <p>
+                                <p style={{ margin: 0 }}>
                                   Sample Size Per Variant ={" "}
                                   {sampleSizePerVariant
                                     ? Math.ceil(sampleSizePerVariant).toLocaleString()
                                     : "calculating..."}
                                 </p>
-                                <p className="mt-3 font-medium">
+                                <p style={{ marginTop: "12px", fontWeight: "500", margin: 0 }}>
                                   Total Sample Size (Control + Variant) ={" "}
                                   {sampleSize ? sampleSize.toLocaleString() : "calculating..."}
                                 </p>
@@ -474,38 +609,60 @@ export function MaxExperimentsCalculator() {
                           </div>
 
                           <div>
-                            <h4 className="font-medium mb-4">Step 2: Calculate Annual Testing Capacity</h4>
-                            <div className="pl-6 border-l-2 border-gray-200">
-                              <p className="mb-3">Annual Traffic:</p>
-                              <div className="bg-gray-100 p-4 rounded border border-gray-200">
-                                <p>Daily Visitors: {dailyVisitors.toLocaleString()}</p>
-                                <p>Annual Visitors = Daily Visitors × 365</p>
-                                <p>
+                            <h4 style={{ fontWeight: "500", marginBottom: "16px", margin: 0 }}>
+                              Step 2: Calculate Annual Testing Capacity
+                            </h4>
+                            <div style={{ paddingLeft: "24px", borderLeft: "2px solid #e5e7eb" }}>
+                              <p style={{ marginBottom: "12px", margin: 0 }}>Annual Traffic:</p>
+                              <div
+                                style={{
+                                  backgroundColor: "#f3f4f6",
+                                  padding: "16px",
+                                  borderRadius: "6px",
+                                  border: "1px solid #e5e7eb",
+                                }}
+                              >
+                                <p style={{ margin: 0 }}>Daily Visitors: {dailyVisitors.toLocaleString()}</p>
+                                <p style={{ margin: 0 }}>Annual Visitors = Daily Visitors × 365</p>
+                                <p style={{ margin: 0 }}>
                                   Annual Visitors ={" "}
                                   {annualVisitors ? annualVisitors.toLocaleString() : "calculating..."}
                                 </p>
                               </div>
 
-                              <p className="mt-6 mb-3">Maximum Tests Calculation:</p>
-                              <div className="bg-gray-100 p-4 rounded border border-gray-200">
-                                <p>Max Tests = Annual Visitors / Total Sample Size</p>
-                                <p>
+                              <p style={{ marginTop: "24px", marginBottom: "12px", margin: 0 }}>
+                                Maximum Tests Calculation:
+                              </p>
+                              <div
+                                style={{
+                                  backgroundColor: "#f3f4f6",
+                                  padding: "16px",
+                                  borderRadius: "6px",
+                                  border: "1px solid #e5e7eb",
+                                }}
+                              >
+                                <p style={{ margin: 0 }}>Max Tests = Annual Visitors / Total Sample Size</p>
+                                <p style={{ margin: 0 }}>
                                   Max Tests = {annualVisitors ? annualVisitors.toLocaleString() : "..."} /{" "}
                                   {sampleSize ? sampleSize.toLocaleString() : "..."}
                                 </p>
-                                <p className="mt-3 font-medium">Maximum A/B Tests Per Year = {maxExperiments}</p>
+                                <p style={{ marginTop: "12px", fontWeight: "500", margin: 0 }}>
+                                  Maximum A/B Tests Per Year = {maxExperiments}
+                                </p>
 
                                 {parallelPercentage > 0 && (
                                   <>
-                                    <p className="mt-6">Calculation with Parallel Tests ({parallelPercentage}%):</p>
-                                    <p>
+                                    <p style={{ marginTop: "24px", margin: 0 }}>
+                                      Calculation with Parallel Tests ({parallelPercentage}%):
+                                    </p>
+                                    <p style={{ margin: 0 }}>
                                       Parallel Factor = 1 + ({parallelPercentage} / 100) ={" "}
                                       {1 + parallelPercentage / 100}
                                     </p>
-                                    <p>
+                                    <p style={{ margin: 0 }}>
                                       Max Tests with Parallelization = {maxExperiments} × {1 + parallelPercentage / 100}
                                     </p>
-                                    <p className="mt-3 font-medium">
+                                    <p style={{ marginTop: "12px", fontWeight: "500", margin: 0 }}>
                                       Maximum A/B Tests Per Year (With Parallelization) = {maxParallelExperiments}
                                     </p>
                                   </>
@@ -515,10 +672,20 @@ export function MaxExperimentsCalculator() {
                           </div>
 
                           <div>
-                            <h4 className="font-medium mb-4">Step 3: Calculate Error Risks</h4>
-                            <div className="pl-6 border-l-2 border-gray-200">
-                              <p className="mb-3">Error Types:</p>
-                              <ul className="list-disc pl-5 space-y-2">
+                            <h4 style={{ fontWeight: "500", marginBottom: "16px", margin: 0 }}>
+                              Step 3: Calculate Error Risks
+                            </h4>
+                            <div style={{ paddingLeft: "24px", borderLeft: "2px solid #e5e7eb" }}>
+                              <p style={{ marginBottom: "12px", margin: 0 }}>Error Types:</p>
+                              <ul
+                                style={{
+                                  listStyleType: "disc",
+                                  paddingLeft: "20px",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: "8px",
+                                }}
+                              >
                                 <li>
                                   <strong>False Positive (Type I Error):</strong> {falsePositiveRisk.toFixed(1)}% -
                                   Probability of concluding there's an effect when there isn't one
@@ -529,29 +696,22 @@ export function MaxExperimentsCalculator() {
                                 </li>
                               </ul>
 
-                              <p className="mt-6 mb-3">How MDE Affects False Negative Risk:</p>
-                              <div className="bg-gray-100 p-4 rounded border border-gray-200">
-                                <p>
-                                  For a fixed sample size, a larger MDE (easier to detect) reduces the false negative
-                                  risk. Conversely, a smaller MDE (harder to detect) increases the false negative risk.
-                                </p>
-                                <p className="mt-3">
-                                  The standardized effect size is calculated as: |p₂ - p₁| / √(p_avg × (1 - p_avg) ×
-                                  2/n)
-                                </p>
-                                <p className="mt-3">
-                                  This standardized effect size directly influences the statistical power and thus the
-                                  false negative risk.
-                                </p>
-                              </div>
-
-                              <p className="mt-6 mb-3">Expected False Positives Per Year:</p>
-                              <div className="bg-gray-100 p-4 rounded border border-gray-200">
-                                <p>Expected False Positives = Max Tests × False Positive Risk</p>
-                                <p>
+                              <p style={{ marginTop: "24px", marginBottom: "12px", margin: 0 }}>
+                                Expected False Positives Per Year:
+                              </p>
+                              <div
+                                style={{
+                                  backgroundColor: "#f3f4f6",
+                                  padding: "16px",
+                                  borderRadius: "6px",
+                                  border: "1px solid #e5e7eb",
+                                }}
+                              >
+                                <p style={{ margin: 0 }}>Expected False Positives = Max Tests × False Positive Risk</p>
+                                <p style={{ margin: 0 }}>
                                   Expected False Positives = {maxExperiments} × {(falsePositiveRisk / 100).toFixed(3)}
                                 </p>
-                                <p className="mt-3 font-medium">
+                                <p style={{ marginTop: "12px", fontWeight: "500", margin: 0 }}>
                                   Expected False Positives Per Year ={" "}
                                   {annualFalsePositives ? formatDecimal(annualFalsePositives) : "calculating..."}
                                 </p>
@@ -566,18 +726,32 @@ export function MaxExperimentsCalculator() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md">
-              <CardHeader className="pb-3 bg-white rounded-t-lg">
+            <Card style={{ border: "none", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}>
+              <CardHeader
+                style={{
+                  paddingBottom: "12px",
+                  backgroundColor: "white",
+                  borderTopLeftRadius: "8px",
+                  borderTopRightRadius: "8px",
+                }}
+              >
                 <CardTitle>MDE vs. False Negative Risk</CardTitle>
               </CardHeader>
-              <CardContent className="bg-white rounded-b-lg pt-6">
-                <div className="space-y-6">
-                  <div className="text-sm text-gray-600 mb-4">
+              <CardContent
+                style={{
+                  backgroundColor: "white",
+                  borderBottomLeftRadius: "8px",
+                  borderBottomRightRadius: "8px",
+                  paddingTop: "24px",
+                }}
+              >
+                <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                  <div style={{ fontSize: "14px", color: "#4b5563", marginBottom: "16px" }}>
                     This chart shows how the Minimum Detectable Effect (MDE) affects the False Negative Risk for your
                     current sample size. A larger MDE is easier to detect, resulting in a lower risk of missing a real
                     effect.
                   </div>
-                  <div className="h-80 w-full">
+                  <div style={{ height: "320px", width: "100%" }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={mdeChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -600,8 +774,8 @@ export function MaxExperimentsCalculator() {
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className="text-sm text-gray-500 mt-4">
-                    <p>
+                  <div style={{ fontSize: "14px", color: "#6b7280", marginTop: "16px" }}>
+                    <p style={{ margin: 0 }}>
                       <strong>Note:</strong> The chart shows how false negative risk decreases as MDE increases. Your
                       current MDE is {mde}% with a false negative risk of {falseNegativeRisk.toFixed(1)}%.
                     </p>
@@ -610,32 +784,76 @@ export function MaxExperimentsCalculator() {
               </CardContent>
             </Card>
 
-            <Card className="border-0 shadow-md">
-              <CardHeader className="pb-3 bg-white rounded-t-lg">
+            <Card style={{ border: "none", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}>
+              <CardHeader
+                style={{
+                  paddingBottom: "12px",
+                  backgroundColor: "white",
+                  borderTopLeftRadius: "8px",
+                  borderTopRightRadius: "8px",
+                }}
+              >
                 <CardTitle>Parallel Testing</CardTitle>
               </CardHeader>
-              <CardContent className="bg-white rounded-b-lg pt-6">
-                <div className="space-y-8">
-                  <div className="text-sm text-gray-600">
-                    <p>
+              <CardContent
+                style={{
+                  backgroundColor: "white",
+                  borderBottomLeftRadius: "8px",
+                  borderBottomRightRadius: "8px",
+                  paddingTop: "24px",
+                }}
+              >
+                <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                  <div style={{ fontSize: "14px", color: "#4b5563" }}>
+                    <p style={{ margin: 0 }}>
                       Running tests in parallel can significantly increase your testing capacity, but comes with some
                       important limitations and considerations:
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="bg-gray-100 p-8 rounded-lg">
-                      <h4 className="font-medium mb-4">Benefits of Parallel Testing</h4>
-                      <ul className="list-disc pl-5 space-y-3 text-sm text-gray-600">
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                      gap: "32px",
+                    }}
+                  >
+                    <div style={{ backgroundColor: "#f3f4f6", padding: "32px", borderRadius: "8px" }}>
+                      <h4 style={{ fontWeight: "500", marginBottom: "16px", margin: 0 }}>
+                        Benefits of Parallel Testing
+                      </h4>
+                      <ul
+                        style={{
+                          listStyleType: "disc",
+                          paddingLeft: "20px",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "12px",
+                          fontSize: "14px",
+                          color: "#4b5563",
+                        }}
+                      >
                         <li>Increased annual testing capacity</li>
                         <li>Reduced time needed to test multiple hypotheses</li>
                         <li>Faster website optimization</li>
                       </ul>
                     </div>
 
-                    <div className="bg-gray-100 p-8 rounded-lg">
-                      <h4 className="font-medium mb-4">Limitations and Considerations</h4>
-                      <ul className="list-disc pl-5 space-y-3 text-sm text-gray-600">
+                    <div style={{ backgroundColor: "#f3f4f6", padding: "32px", borderRadius: "8px" }}>
+                      <h4 style={{ fontWeight: "500", marginBottom: "16px", margin: 0 }}>
+                        Limitations and Considerations
+                      </h4>
+                      <ul
+                        style={{
+                          listStyleType: "disc",
+                          paddingLeft: "20px",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "12px",
+                          fontSize: "14px",
+                          color: "#4b5563",
+                        }}
+                      >
                         <li>
                           <strong>Test interference:</strong> Tests affecting the same users can interfere with each
                           other
@@ -656,8 +874,8 @@ export function MaxExperimentsCalculator() {
                     </div>
                   </div>
 
-                  <div className="text-sm text-gray-600 mt-4">
-                    <p>
+                  <div style={{ fontSize: "14px", color: "#4b5563", marginTop: "16px" }}>
+                    <p style={{ margin: 0 }}>
                       <strong>Recommendation:</strong> Start with a low percentage of parallel tests (20-30%) and
                       gradually increase based on your ability to manage complexity and avoid test interference.
                     </p>
@@ -668,36 +886,76 @@ export function MaxExperimentsCalculator() {
           </>
         )}
 
-        <Card className="border-0 shadow-md">
-          <CardHeader className="pb-3 bg-white rounded-t-lg">
+        <Card style={{ border: "none", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}>
+          <CardHeader
+            style={{
+              paddingBottom: "12px",
+              backgroundColor: "white",
+              borderTopLeftRadius: "8px",
+              borderTopRightRadius: "8px",
+            }}
+          >
             <CardTitle>Understanding Error Risks</CardTitle>
           </CardHeader>
-          <CardContent className="bg-white rounded-b-lg pt-6">
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <CardContent
+            style={{
+              backgroundColor: "white",
+              borderBottomLeftRadius: "8px",
+              borderBottomRightRadius: "8px",
+              paddingTop: "24px",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+              <div
+                style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "32px" }}
+              >
                 <div>
-                  <h3 className="font-medium mb-4">False Positive Risk (Type I Error)</h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <h3 style={{ fontWeight: "500", marginBottom: "16px", margin: 0 }}>
+                    False Positive Risk (Type I Error)
+                  </h3>
+                  <p style={{ fontSize: "14px", color: "#4b5563", marginBottom: "16px", margin: 0 }}>
                     The false positive risk is determined solely by your confidence level and remains constant
                     regardless of other parameters:
                   </p>
-                  <ul className="list-disc pl-5 text-sm text-gray-600 space-y-2">
+                  <ul
+                    style={{
+                      listStyleType: "disc",
+                      paddingLeft: "20px",
+                      fontSize: "14px",
+                      color: "#4b5563",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "8px",
+                    }}
+                  >
                     <li>95% confidence level → 5% false positive risk</li>
                     <li>90% confidence level → 10% false positive risk</li>
                     <li>99% confidence level → 1% false positive risk</li>
                   </ul>
-                  <p className="text-sm text-gray-600 mt-4">
+                  <p style={{ fontSize: "14px", color: "#4b5563", marginTop: "16px", margin: 0 }}>
                     This is why the false positive risk appears static - it only changes when you change the confidence
                     level.
                   </p>
                 </div>
 
                 <div>
-                  <h3 className="font-medium mb-4">False Negative Risk (Type II Error)</h3>
-                  <p className="text-sm text-gray-600 mb-4">
+                  <h3 style={{ fontWeight: "500", marginBottom: "16px", margin: 0 }}>
+                    False Negative Risk (Type II Error)
+                  </h3>
+                  <p style={{ fontSize: "14px", color: "#4b5563", marginBottom: "16px", margin: 0 }}>
                     The false negative risk is more complex and depends on multiple factors:
                   </p>
-                  <ul className="list-disc pl-5 text-sm text-gray-600 space-y-2">
+                  <ul
+                    style={{
+                      listStyleType: "disc",
+                      paddingLeft: "20px",
+                      fontSize: "14px",
+                      color: "#4b5563",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "8px",
+                    }}
+                  >
                     <li>
                       <strong>MDE:</strong> Larger effects are easier to detect, so increasing the MDE decreases the
                       false negative risk
