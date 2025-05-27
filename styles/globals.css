@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-libre);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+@media print {
+  body {
+    font-size: 12pt;
+  }
+
+  h1 {
+    font-size: 18pt;
+    margin-bottom: 10pt;
+  }
+
+  h2 {
+    font-size: 16pt;
+    margin-top: 15pt;
+    margin-bottom: 8pt;
+  }
+
+  p,
+  li {
+    margin-bottom: 5pt;
+  }
+
+  .card {
+    page-break-inside: avoid;
+  }
+}
