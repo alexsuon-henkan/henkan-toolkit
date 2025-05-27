@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { BarChart2, Calculator, TrendingUp, DollarSign, GitBranch, BarChart, Sparkles, Clipboard } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 
 const NavItem = ({ item, pathname }) => (
   <Link
@@ -16,13 +15,6 @@ const NavItem = ({ item, pathname }) => (
       <item.icon className="h-5 w-5" />
       <span className="ml-3 opacity-0 group-hover:opacity-100 whitespace-nowrap">{item.name}</span>
     </div>
-    {item.beta && (
-      <div className="flex items-center opacity-0 group-hover:opacity-100">
-        <Badge variant="secondary" className="ml-1 text-xs bg-blue-100 text-blue-500 hover:bg-blue-100">
-          BETA
-        </Badge>
-      </div>
-    )}
     {item.isNew && (
       <div className="flex items-center opacity-0 group-hover:opacity-100">
         <Sparkles className="h-4 w-4 text-yellow-500" />
@@ -36,7 +28,7 @@ const Divider = ({ className }) => <div className={className} />
 
 const calculatorItems = [
   { name: "Frequentist Calculator", href: "/", icon: BarChart2 },
-  { name: "Bayesian Calculator", href: "/bayesian-calculator", icon: Calculator, beta: true },
+  { name: "Bayesian Calculator", href: "/bayesian-calculator", icon: Calculator },
   { name: "Revenue Calculator", href: "/revenue-calculator", icon: TrendingUp },
   { name: "Duration Calculator (MDE)", href: "/duration-calculator", icon: Calculator },
   { name: "AOV Calculator", href: "/aov-calculator", icon: DollarSign },
@@ -44,8 +36,8 @@ const calculatorItems = [
 ]
 
 const diagramItems = [
-  { name: "Waterfall Chart", href: "/waterfall-chart", icon: BarChart, beta: true },
-  { name: "Sankey Diagram", href: "/sankey-diagram", icon: GitBranch, beta: true },
+  { name: "Waterfall Chart", href: "/waterfall-chart", icon: BarChart },
+  { name: "Sankey Diagram", href: "/sankey-diagram", icon: GitBranch },
 ]
 
 const systemItems = [{ name: "Logs", href: "/logs", icon: Clipboard, isNew: true }]
