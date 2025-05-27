@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
 import { Slider } from "@/components/ui/slider"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 export function MaxExperimentsCalculator() {
   // All the existing state and logic remains the same...
@@ -423,6 +424,154 @@ export function MaxExperimentsCalculator() {
             </Card>
           </>
         )}
+
+        <Card className="border-0 shadow-sm mb-8">
+          <CardHeader>
+            <CardTitle className="font-serif text-2xl">How to Use This Maximum Experiments Calculator</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ol className="list-decimal list-inside space-y-2 ml-4">
+              <li className="text-gray-700">
+                Enter your daily visitor count and current conversion rate in the respective fields.
+              </li>
+              <li className="text-gray-700">
+                Set your minimum detectable effect (MDE) - the smallest change you want to detect.
+              </li>
+              <li className="text-gray-700">
+                Configure your confidence level (typically 95%) and statistical power (typically 80%).
+              </li>
+              <li className="text-gray-700">
+                Adjust the parallel testing percentage based on your ability to run simultaneous tests.
+              </li>
+              <li className="text-gray-700">
+                Click "Calculate" to see your annual testing capacity and statistical parameters.
+              </li>
+              <li className="text-gray-700">
+                Review the MDE vs. False Negative Risk chart to understand the trade-offs.
+              </li>
+            </ol>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-sm mb-8">
+          <CardHeader>
+            <CardTitle className="font-serif text-2xl">Key Terms and Definitions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <dl className="space-y-4">
+              {[
+                {
+                  term: "Minimum Detectable Effect (MDE)",
+                  definition:
+                    "The smallest relative change in conversion rate that you want to be able to detect with confidence. A smaller MDE requires larger sample sizes.",
+                },
+                {
+                  term: "Statistical Power",
+                  definition:
+                    "The probability that your test will correctly identify a real effect when one exists. Higher power means lower risk of missing true effects (false negatives).",
+                },
+                {
+                  term: "Confidence Level",
+                  definition:
+                    "The probability that your test results are not due to random chance. A 95% confidence level means there's only a 5% chance of false positives.",
+                },
+                {
+                  term: "Sample Size",
+                  definition:
+                    "The total number of visitors needed for each A/B test to achieve your desired statistical power and confidence level.",
+                },
+                {
+                  term: "False Positive Risk (Type I Error)",
+                  definition:
+                    "The probability of concluding there's a significant effect when there actually isn't one. This is determined by your confidence level.",
+                },
+                {
+                  term: "False Negative Risk (Type II Error)",
+                  definition:
+                    "The probability of missing a real effect. This depends on your MDE, sample size, baseline conversion rate, and confidence level.",
+                },
+                {
+                  term: "Parallel Testing",
+                  definition:
+                    "Running multiple A/B tests simultaneously on different parts of your site or different user segments to increase testing velocity without interference.",
+                },
+                {
+                  term: "Annual Testing Capacity",
+                  definition:
+                    "The maximum number of A/B tests you can run in a year based on your traffic volume and required sample sizes.",
+                },
+              ].map((item, index) => (
+                <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                  <dt className="font-medium text-[#4CAF50] mb-1">{item.term}</dt>
+                  <dd className="text-gray-700">{item.definition}</dd>
+                </div>
+              ))}
+            </dl>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-sm mb-8">
+          <CardHeader>
+            <CardTitle className="font-serif text-2xl">Frequently Asked Questions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Accordion type="single" collapsible className="w-full">
+              {[
+                {
+                  question: "How does this calculator determine the maximum number of experiments?",
+                  answer:
+                    "The calculator uses statistical formulas to determine the sample size needed for each A/B test based on your parameters, then divides your total annual traffic by this sample size to estimate how many tests you can run sequentially. For parallel testing, it applies a multiplier based on your specified percentage.",
+                },
+                {
+                  question: "Why does the number of tests decrease when my MDE decreases?",
+                  answer:
+                    "The smaller the effect you want to detect, the larger sample size you need to detect it with confidence. This is because detecting small changes requires more data to distinguish them from random noise. Therefore, each test requires more traffic, which reduces the total number of tests you can run with your available traffic.",
+                },
+                {
+                  question: "Can I really run tests in parallel without affecting results?",
+                  answer:
+                    "Yes, but only if the tests target different parts of your site, different user segments, or different features that don't interact with each other. For example, you could test homepage design and checkout flow simultaneously, but not two different homepage designs. The key is ensuring no overlap in what's being tested.",
+                },
+                {
+                  question: "What statistical assumptions does this calculator use?",
+                  answer:
+                    "This calculator uses standard statistical assumptions for comparing two proportions, which is appropriate for conversion rate testing. It assumes normal distribution for large samples, uses z-scores for confidence intervals, and applies the standard formula for sample size calculation in A/B testing.",
+                },
+                {
+                  question: "How can I increase my testing capacity?",
+                  answer:
+                    "You can increase testing capacity by: 1) Increasing traffic to your site, 2) Testing larger changes (higher MDE) that require smaller sample sizes, 3) Accepting slightly lower confidence or power for some tests, 4) Running tests in parallel on different site areas, or 5) Focusing tests on higher-converting user segments.",
+                },
+                {
+                  question: "Should I account for seasonality in my testing plan?",
+                  answer:
+                    "Yes, this calculator uses constant average daily traffic, but in practice you should account for seasonal variations. Avoid launching tests during atypical periods like holidays, major promotions, or known traffic spikes. Consider running tests during stable periods and plan your testing calendar around seasonal patterns.",
+                },
+                {
+                  question: "What's the relationship between MDE and false negative risk?",
+                  answer:
+                    "There's an inverse relationship: as MDE increases (larger effects), false negative risk decreases (less likely to miss real effects). This is because larger effects are easier to detect with the same sample size. The chart in the calculator visualizes this relationship for your specific parameters.",
+                },
+                {
+                  question: "How do I choose the right confidence level and statistical power?",
+                  answer:
+                    "Industry standards are 95% confidence level and 80% statistical power. Higher confidence (99%) reduces false positives but requires larger sample sizes. Higher power (90%) reduces false negatives but also requires larger samples. Choose based on the cost of making wrong decisions in your specific context.",
+                },
+              ].map((item, index) => (
+                <AccordionItem
+                  value={`item-${index + 1}`}
+                  key={index}
+                  className="border-b border-gray-200 last:border-b-0"
+                >
+                  <AccordionTrigger className="text-left font-medium text-gray-700 hover:text-[#4CAF50]">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-gray-600">{item.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
