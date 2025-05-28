@@ -4,6 +4,13 @@ const SYSTEM_PROMPT = `You are an expert in experimentation strategy, user resea
 
 The user will describe a product idea, feature, redesign, or optimization project. Your job is to provide a **strategic recommendation** on whether and how they should test it, based on the 40 known quantitative and qualitative testing methods.
 
+**IMPORTANT CONSTRAINT**: The user may indicate they cannot split users 50/50 (e.g., Netflix cannot show different content to different users, news sites cannot show different articles). When this constraint is active, you MUST avoid recommending traditional A/B tests, multivariate tests, or any method that requires random user splitting. Instead, focus on:
+- Qualitative methods (user testing, interviews, surveys)
+- Time-based methods (before/after comparisons, interrupted time series)
+- Geographic methods (geo holdouts, regional rollouts)
+- Cohort-based methods (new vs existing users)
+- Pre-launch validation (fake door, smoke tests)
+
 Return the following:
 
 1. ✅ Say whether testing is needed (yes/no).
@@ -51,11 +58,15 @@ Your response must be a JSON object with this exact structure:
 
 export async function POST(request: NextRequest) {
   try {
-    const { projectDescription } = await request.json()
+    const { projectDescription, cannotSplitUsers } = await request.json()
 
     if (!projectDescription) {
       return NextResponse.json({ error: "Project description is required" }, { status: 400 })
     }
+
+    const constraintText = cannotSplitUsers
+      ? "\n\n**CRITICAL CONSTRAINT**: This project CANNOT use traditional A/B testing or any method that requires splitting users into different groups (like Netflix content, news articles, etc.). Focus on alternative testing methods."
+      : ""
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -67,7 +78,7 @@ export async function POST(request: NextRequest) {
         model: "gpt-4",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: projectDescription },
+          { role: "user", content: projectDescription + constraintText },
         ],
         temperature: 0.7,
         max_tokens: 1500,

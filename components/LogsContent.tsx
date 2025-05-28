@@ -16,6 +16,36 @@ interface LogEntry {
 
 const logs: LogEntry[] = [
   {
+    version: "v3.9",
+    date: "May 28, 2025",
+    changes: [
+      {
+        type: "added" as const,
+        title: "Method Assistant with AI-Powered Recommendations",
+        description:
+          "Launched a new AI assistant that analyzes project descriptions and recommends the best testing methods from 40+ quantitative and qualitative approaches. Features strategic timeline planning and constraint handling.",
+      },
+      {
+        type: "added" as const,
+        title: "Comprehensive Method Library",
+        description:
+          "Added a complete database of 40 testing methods with relevance scoring, filtering, and detailed descriptions. Users can now see all available methods and understand why specific ones are recommended.",
+      },
+      {
+        type: "added" as const,
+        title: "User Splitting Constraints",
+        description:
+          "Added toggle for scenarios where traditional A/B testing isn't possible (like Netflix content testing). The AI adapts recommendations to focus on alternative methods like time-based comparisons and qualitative research.",
+      },
+      {
+        type: "improved" as const,
+        title: "Strategic Testing Timeline",
+        description:
+          "Method Assistant now provides 3-phase testing strategies: Before Launch (research/validation), At Launch (experiments/rollout), and After Launch (monitoring/impact analysis).",
+      },
+    ],
+  },
+  {
     version: "v3.8",
     date: "May 28, 2025",
     changes: [

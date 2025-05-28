@@ -36,6 +36,11 @@ const NavItem = ({ item, pathname }) => (
         <span className="ml-1 text-xs font-semibold text-blue-500 bg-blue-100 px-2 py-1 rounded">BETA</span>
       </div>
     )}
+    {item.isUpdated && (
+      <div className="flex items-center opacity-0 group-hover:opacity-100">
+        <span className="ml-1 text-xs font-semibold text-green-500 bg-green-100 px-2 py-1 rounded">UPDATED</span>
+      </div>
+    )}
   </Link>
 )
 
@@ -57,7 +62,7 @@ const diagramItems = [
 
 const assistantItems = [{ name: "Method Assistant", href: "/method-assistant", icon: Bot, isBeta: true }]
 
-const systemItems = [{ name: "Logs", href: "/logs", icon: Clipboard, isNew: true }]
+const systemItems = [{ name: "Logs", href: "/logs", icon: Clipboard, isUpdated: true }]
 
 export function Sidebar() {
   const pathname = usePathname()
@@ -103,7 +108,7 @@ export function Sidebar() {
           </nav>
         </div>
         <div className="mt-auto p-4 border-t">
-          <span className="text-sm text-gray-500">v3.7</span>
+          <span className="text-sm text-gray-500">v3.9</span>
         </div>
       </div>
     </div>
