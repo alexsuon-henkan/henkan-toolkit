@@ -117,8 +117,8 @@ export function MethodAssistant() {
   }
 
   return (
-    <TooltipProvider>
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
+      <TooltipProvider>
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -214,79 +214,156 @@ export function MethodAssistant() {
 
         {recommendation && (
           <div className="space-y-6">
-            {/* Testing Assessment */}
+            {/* Testing Assessment - Enhanced */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600" />
                   Testing Assessment
                 </CardTitle>
+                <CardDescription>AI analysis of your project's testing requirements and approach</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">Testing Needed:</span>
-                    <Badge variant={recommendation.testingNeeded ? "default" : "secondary"}>
-                      {recommendation.testingNeeded ? "Yes" : "No"}
-                    </Badge>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="w-4 h-4 text-gray-400 hover:text-gray-600" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p>
-                          <strong>Yes:</strong> Your project would benefit from testing to validate assumptions, measure
-                          impact, or understand user behavior.
-                          <br />
-                          <strong>No:</strong> Testing may not be necessary (e.g., simple bug fixes, compliance changes,
-                          or low-risk updates).
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">Research Type:</span>
-                    <Badge variant="outline">{recommendation.researchType}</Badge>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="w-4 h-4 text-gray-400 hover:text-gray-600" />
-                      </TooltipTrigger>
-                      <TooltipContent className="max-w-xs">
-                        <p>
-                          <strong>Quantitative:</strong> Data-driven testing with numbers and statistics (A/B tests,
-                          analytics).
-                          <br />
-                          <strong>Qualitative:</strong> Understanding user behavior and motivations (interviews,
-                          usability tests).
-                          <br />
-                          <strong>Both:</strong> Combine numbers with insights for a complete picture.
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-
-                  {cannotSplitUsers && (
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">Constraint:</span>
-                      <Badge variant="outline" className="bg-orange-100 text-orange-800">
-                        No User Splitting
-                      </Badge>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Testing Needed */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div
+                        className={`w-3 h-3 rounded-full ${recommendation.testingNeeded ? "bg-green-500" : "bg-gray-400"}`}
+                      />
+                      <span className="font-semibold text-lg">Testing Needed</span>
                       <Tooltip>
-                        <TooltipTrigger>
-                          <Info className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                            <Info className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                          </Button>
                         </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p>
-                            Traditional A/B testing is not possible. Recommendations focus on alternative methods like
-                            time-based comparisons, geographic testing, or qualitative research.
-                          </p>
+                        <TooltipContent className="max-w-sm p-3">
+                          <div className="space-y-2">
+                            <p className="font-medium">Testing Recommendation:</p>
+                            <p className="text-sm">
+                              <strong>Yes:</strong> Your project would benefit from testing to validate assumptions,
+                              measure impact, or understand user behavior.
+                            </p>
+                            <p className="text-sm">
+                              <strong>No:</strong> Testing may not be necessary (e.g., simple bug fixes, compliance
+                              changes, or low-risk updates).
+                            </p>
+                          </div>
                         </TooltipContent>
                       </Tooltip>
                     </div>
-                  )}
+                    <div className="pl-5">
+                      <Badge
+                        variant={recommendation.testingNeeded ? "default" : "secondary"}
+                        className={`text-sm px-3 py-1 ${
+                          recommendation.testingNeeded
+                            ? "bg-green-100 text-green-800 border-green-200"
+                            : "bg-gray-100 text-gray-600 border-gray-200"
+                        }`}
+                      >
+                        {recommendation.testingNeeded ? "Yes - Testing Recommended" : "No - Testing Not Required"}
+                      </Badge>
+                      <p className="text-sm text-gray-600 mt-2">
+                        {recommendation.testingNeeded
+                          ? "This project will benefit from structured testing to validate changes and measure impact."
+                          : "This project appears to be low-risk and may not require formal testing."}
+                      </p>
+                    </div>
+                  </div>
 
-                  <p className="text-gray-600">{recommendation.summary}</p>
+                  {/* Research Type */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-3 h-3 rounded-full bg-blue-500" />
+                      <span className="font-semibold text-lg">Research Type</span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                            <Info className="w-4 h-4 text-gray-400 hover:text-gray-600" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-sm p-3">
+                          <div className="space-y-2">
+                            <p className="font-medium">Research Approach:</p>
+                            <p className="text-sm">
+                              <strong>Quantitative:</strong> Data-driven testing with numbers and statistics (A/B tests,
+                              analytics).
+                            </p>
+                            <p className="text-sm">
+                              <strong>Qualitative:</strong> Understanding user behavior and motivations (interviews,
+                              usability tests).
+                            </p>
+                            <p className="text-sm">
+                              <strong>Both:</strong> Combine numbers with insights for a complete picture.
+                            </p>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <div className="pl-5">
+                      <Badge variant="outline" className="text-sm px-3 py-1 bg-blue-50 text-blue-800 border-blue-200">
+                        {recommendation.researchType}
+                      </Badge>
+                      <p className="text-sm text-gray-600 mt-2">
+                        {recommendation.researchType === "Quantitative" &&
+                          "Focus on measurable metrics and statistical analysis."}
+                        {recommendation.researchType === "Qualitative" &&
+                          "Focus on understanding user behavior and motivations."}
+                        {recommendation.researchType === "Both" &&
+                          "Combine quantitative metrics with qualitative insights."}
+                        {!["Quantitative", "Qualitative", "Both"].includes(recommendation.researchType) &&
+                          "Recommended research approach for your project."}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Constraints */}
+                {cannotSplitUsers && (
+                  <div className="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <AlertTriangle className="w-5 h-5 text-orange-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-medium text-orange-900">Active Constraint</span>
+                          <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-300">
+                            No User Splitting
+                          </Badge>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                                <Info className="w-4 h-4 text-orange-500 hover:text-orange-700" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-sm p-3">
+                              <div className="space-y-2">
+                                <p className="font-medium">User Splitting Constraint:</p>
+                                <p className="text-sm">
+                                  Traditional A/B testing is not possible. Recommendations focus on alternative methods
+                                  like time-based comparisons, geographic testing, or qualitative research.
+                                </p>
+                                <p className="text-sm">
+                                  <strong>Common scenarios:</strong> Content platforms, news sites, features affecting
+                                  all users equally.
+                                </p>
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                        <p className="text-sm text-orange-700">
+                          Traditional A/B testing is not feasible. Alternative testing methods have been prioritized in
+                          the recommendations.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Summary */}
+                <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                  <h4 className="font-medium text-gray-900 mb-2">Assessment Summary</h4>
+                  <p className="text-gray-700 text-sm leading-relaxed">{recommendation.summary}</p>
                 </div>
               </CardContent>
             </Card>
@@ -411,7 +488,7 @@ export function MethodAssistant() {
             )}
           </div>
         )}
-      </div>
-    </TooltipProvider>
+      </TooltipProvider>
+    </div>
   )
 }
