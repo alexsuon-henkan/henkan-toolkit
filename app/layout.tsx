@@ -7,7 +7,6 @@ import type { Metadata } from "next"
 import { Analytics } from "@vercel/analytics/react"
 import Sidebar from "@/components/Sidebar"
 import { Suspense } from "react"
-import { Footer } from "@/components/Footer"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -67,10 +66,7 @@ export default function RootLayout({
             <TopNav />
             <div className="flex">
               <Sidebar />
-              <main className="w-full pl-16 mt-16">
-                {children}
-                <Footer />
-              </main>
+              <main className="w-full pl-16 mt-16">{children}</main>
             </div>
             <Analytics />
           </Suspense>
