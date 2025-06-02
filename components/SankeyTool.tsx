@@ -100,62 +100,70 @@ export default function SankeyTool() {
 
         <Card className="border-gray-200 dark:border-gray-700 shadow-lg mb-8">
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-1 space-y-4">
-                <div>
-                  <Label
-                    htmlFor="sankeyInput"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                  >
-                    Enter your data:
-                  </Label>
-                  <Textarea
-                    id="sankeyInput"
-                    value={input}
-                    onChange={handleInputChange}
-                    placeholder={SAMPLE_SANKEY_DATA}
-                    className="h-48 font-mono border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="themeSelector" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Choose Color Theme:
-                  </Label>
-                  <Select value={selectedTheme} onValueChange={handleThemeChange}>
-                    <SelectTrigger
-                      id="themeSelector"
-                      className="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+            <div className="space-y-6">
+              {/* Data Input Section */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label
+                      htmlFor="sankeyInput"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                     >
-                      <Palette className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
-                      <SelectValue placeholder="Choose a theme" />
-                    </SelectTrigger>
-                    <SelectContent className="dark:bg-gray-800">
-                      {THEME_OPTIONS.map((option) => (
-                        <SelectItem
-                          key={option.value}
-                          value={option.value}
-                          className="dark:text-gray-200 dark:hover:bg-gray-700"
-                        >
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      Enter your data:
+                    </Label>
+                    <Textarea
+                      id="sankeyInput"
+                      value={input}
+                      onChange={handleInputChange}
+                      placeholder={SAMPLE_SANKEY_DATA}
+                      className="h-48 font-mono border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-200"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="md:col-span-2 p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
-                <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Data Format:</h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
-                  Each line should contain:{" "}
-                  <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">source(display name)</code>,{" "}
-                  <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">target(display name)</code>,{" "}
-                  <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded">value</code>.
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  The display name in parentheses is optional. If not provided, the external name will be used for both
-                  calculation and display. Example: "Housing(Rent), Utilities(Bills), 500".
-                </p>
+                <div className="space-y-4">
+                  <div>
+                    <Label
+                      htmlFor="themeSelector"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                    >
+                      Choose Color Theme:
+                    </Label>
+                    <Select value={selectedTheme} onValueChange={handleThemeChange}>
+                      <SelectTrigger
+                        id="themeSelector"
+                        className="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+                      >
+                        <Palette className="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" />
+                        <SelectValue placeholder="Choose a theme" />
+                      </SelectTrigger>
+                      <SelectContent className="dark:bg-gray-800">
+                        {THEME_OPTIONS.map((option) => (
+                          <SelectItem
+                            key={option.value}
+                            value={option.value}
+                            className="dark:text-gray-200 dark:hover:bg-gray-700"
+                          >
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-md">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Data Format:</h4>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
+                      Format:{" "}
+                      <code className="bg-gray-200 dark:bg-gray-700 px-1 rounded text-xs">
+                        source(display), target(display), value
+                      </code>
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Display names in parentheses are optional. Example: "Housing(Rent), Utilities(Bills), 500"
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
