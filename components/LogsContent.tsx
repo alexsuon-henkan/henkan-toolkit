@@ -16,6 +16,30 @@ interface LogEntry {
 
 const logs: LogEntry[] = [
   {
+    version: "v3.10",
+    date: "June 2, 2025",
+    changes: [
+      {
+        type: "fixed" as const,
+        title: "Sankey Diagram Theme Selector",
+        description:
+          "Fixed critical issue where changing color themes would break the Sankey diagram. The theme selector now works seamlessly, allowing users to switch between McKinsey, BCG, Bain, and Classic D3 color palettes without errors.",
+      },
+      {
+        type: "improved" as const,
+        title: "Sankey Diagram Stability",
+        description:
+          "Enhanced the underlying D3 Sankey layout configuration to use index-based node identification, improving compatibility with the data parsing system and preventing 'missing node' errors.",
+      },
+      {
+        type: "improved" as const,
+        title: "Error Handling and Debugging",
+        description:
+          "Added comprehensive error handling and debugging logs to the Sankey diagram component to help identify and resolve rendering issues more quickly.",
+      },
+    ],
+  },
+  {
     version: "v3.9",
     date: "May 28, 2025",
     changes: [

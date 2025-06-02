@@ -57,7 +57,7 @@ const calculatorItems = [
 
 const diagramItems = [
   { name: "Waterfall Chart", href: "/waterfall-chart", icon: BarChart },
-  { name: "Sankey Diagram", href: "/sankey-diagram", icon: GitBranch },
+  { name: "Sankey Diagram", href: "/sankey-diagram", icon: GitBranch, isUpdated: true },
 ]
 
 const assistantItems = [{ name: "Method Assistant", href: "/method-assistant", icon: Bot, isBeta: true }]
