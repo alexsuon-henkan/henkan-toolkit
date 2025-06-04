@@ -52,7 +52,7 @@ const calculatorItems = [
   { name: "Revenue Calculator", href: "/revenue-calculator", icon: TrendingUp },
   { name: "Duration Calculator (MDE)", href: "/duration-calculator", icon: Calculator },
   { name: "AOV Calculator", href: "/aov-calculator", icon: DollarSign },
-  { name: "Max Experiments", href: "/max-experiments", icon: Calculator, isNew: true },
+  { name: "Max Experiments", href: "/max-experiments", icon: Calculator, isBeta: true },
 ]
 
 const diagramItems = [
