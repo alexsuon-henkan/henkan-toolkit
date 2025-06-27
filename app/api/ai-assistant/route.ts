@@ -1,51 +1,47 @@
 import { type NextRequest, NextResponse } from "next/server"
 import OpenAI from "openai"
 
+if (!process.env.OPENAI_API_KEY) {
+  throw new Error("OPENAI_API_KEY is not set in the environment variables")
+}
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-const systemPrompt = `You are an expert front-end developer specializing in creating JavaScript code for A/B testing. Your primary task is to generate JavaScript code for **informational banners** and **interactive modals** (like countdowns, newsletter signups, etc.).
+const systemPrompt = `You are an expert front-end developer specializing in creating JavaScript code for website banners and modals. Your primary task is to generate a single JSON object containing two keys: "explanation" and "javascript".
 
-You will be given a user prompt and a screenshot of a webpage.
+- "explanation": A brief, clear explanation of what the JavaScript code does and how to use it.
+- "javascript": The raw JavaScript code. This code should be immediately executable in a browser's developer console. It must not be wrapped in markdown backticks.
 
-**Instructions:**
-1.  Analyze the user's request and the provided screenshot.
-2.  Generate a single block of vanilla JavaScript code that can be run directly in a browser's developer console.
-3.  The code should accomplish the user's goal (e.g., inject a banner, show a modal on exit-intent).
-4.  The generated code should be considered a strong starting point (80-85% complete) but will require developer review. Add a comment at the top of the generated JavaScript code to this effect: \`// DEVELOPER REVIEW RECOMMENDED: This is an AI-generated starting point.\`
-5.  Your entire response MUST be a single JSON object with two keys: "code" and "explanation".
-    - "code": A string containing the complete JavaScript code.
-    - "explanation": A string explaining what the code does and how to use it.
+The generated JavaScript should:
+1.  Be self-contained and not require external libraries unless absolutely necessary (and if so, mention it in the explanation).
+2.  Manipulate the DOM to create, style, and inject the requested banner or modal.
+3.  Include basic styling within the script (e.g., setting element.style properties) to ensure the component is visually acceptable.
+4.  Be robust and include checks for existing elements where appropriate.
+5.  The generated code is a starting point. Add a comment at the top of the generated JavaScript: "// DEVELOPER REVIEW RECOMMENDED: This is an AI-generated starting point."
 
-**Example JSON Output:**
-{
-  "code": "const banner = document.createElement('div'); banner.innerHTML = 'Special Offer!'; document.body.prepend(banner);",
-  "explanation": "This script creates a simple banner and adds it to the top of the page."
-}
+Analyze the user's prompt and the provided screenshot to inform the styling and placement of the generated component. The final output must be only the JSON object.
 `
 
 export async function POST(req: NextRequest) {
-  if (!process.env.OPENAI_API_KEY) {
-    return NextResponse.json({ error: "Server configuration error: Missing OpenAI API key." }, { status: 500 })
-  }
-
   try {
     const formData = await req.formData()
-    const prompt = formData.get("prompt") as string
-    const imageFile = formData.get("image") as File | null
+    const userPrompt = formData.get("prompt") as string
+    const imageFile = formData.get("image") as File
 
-    if (!prompt || !imageFile) {
+    if (!userPrompt || !imageFile) {
       return NextResponse.json({ error: "Prompt and image are required." }, { status: 400 })
     }
 
+    const buffer = Buffer.from(await imageFile.arrayBuffer())
+    const base64 = buffer.toString("base64")
     const mimeType = imageFile.type
-    const imageBuffer = await imageFile.arrayBuffer()
-    const base64 = Buffer.from(imageBuffer).toString("base64")
 
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       max_tokens: 2000,
+      response_format: { type: "json_object" },
       messages: [
         {
           role: "system",
@@ -56,7 +52,7 @@ export async function POST(req: NextRequest) {
           content: [
             {
               type: "text",
-              text: prompt,
+              text: userPrompt,
             },
             {
               type: "image_url",
@@ -67,30 +63,23 @@ export async function POST(req: NextRequest) {
           ],
         },
       ],
-      response_format: { type: "json_object" },
     })
 
-    const responseText = response.choices[0]?.message?.content
-
-    if (!responseText) {
-      return NextResponse.json({ error: "Failed to get a valid response from AI." }, { status: 500 })
+    const content = response.choices[0]?.message?.content
+    if (!content) {
+      throw new Error("Failed to get a valid response from AI.")
     }
 
-    return new Response(responseText, {
-      headers: { "Content-Type": "application/json" },
-    })
+    const parsedResponse = JSON.parse(content)
+    return NextResponse.json(parsedResponse)
   } catch (error) {
     console.error("AI Assistant API error:", error)
     let errorMessage = "An unknown error occurred."
-    let statusCode = 500
-
     if (error instanceof OpenAI.APIError) {
-      errorMessage = error.message
-      statusCode = error.status || 500
+      errorMessage = `OpenAI API Error: ${error.status} ${error.name} - ${error.message}`
     } else if (error instanceof Error) {
       errorMessage = error.message
     }
-
-    return NextResponse.json({ error: `Internal Server Error: ${errorMessage}` }, { status: statusCode })
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }

@@ -74,10 +74,10 @@ const navigation = [
         badge: "AI",
       },
       {
-        name: "Claude Assistant",
-        href: "/claude-assistant",
+        name: "AI Assistant",
+        href: "/ai-assistant",
         icon: Sparkles,
-        description: "AI code generation",
+        description: "Generate banner & modal code",
         badge: "NEW",
       },
     ],
