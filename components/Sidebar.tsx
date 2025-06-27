@@ -2,118 +2,181 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { cn } from "@/lib/utils"
 import {
-  BarChart2,
   Calculator,
-  TrendingUp,
+  Clock,
   DollarSign,
-  GitBranch,
-  BarChart,
+  ShoppingCart,
+  BarChart3,
+  Beaker,
   Sparkles,
-  Clipboard,
-  Bot,
+  TrendingUp,
+  BarChart,
+  FileText,
+  HelpCircle,
+  Activity,
+  Brain,
 } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
-const NavItem = ({ item, pathname }) => (
-  <Link
-    href={item.href}
-    className={`flex items-center justify-between px-4 py-2 mt-1 text-sm text-gray-600 rounded-lg hover:bg-gray-100 ${
-      pathname === item.href ? "bg-gray-100 text-[#4CAF50]" : ""
-    }`}
-  >
-    <div className="flex items-center">
-      <item.icon className="h-5 w-5" />
-      <span className="ml-3 opacity-0 group-hover:opacity-100 whitespace-nowrap">{item.name}</span>
-    </div>
-    {item.isNew && (
-      <div className="flex items-center opacity-0 group-hover:opacity-100">
-        <Sparkles className="h-4 w-4 text-yellow-500" />
-        <span className="ml-1 text-xs font-semibold text-yellow-500">NEW</span>
-      </div>
-    )}
-    {item.isBeta && (
-      <div className="flex items-center opacity-0 group-hover:opacity-100">
-        <span className="ml-1 text-xs font-semibold text-blue-500 bg-blue-100 px-2 py-1 rounded">BETA</span>
-      </div>
-    )}
-    {item.isUpdated && (
-      <div className="flex items-center opacity-0 group-hover:opacity-100">
-        <span className="ml-1 text-xs font-semibold text-green-500 bg-green-100 px-2 py-1 rounded">UPDATED</span>
-      </div>
-    )}
-  </Link>
-)
-
-const Divider = ({ className }) => <div className={className} />
-
-const calculatorItems = [
-  { name: "Frequentist Calculator", href: "/", icon: BarChart2 },
-  { name: "Bayesian Calculator", href: "/bayesian-calculator", icon: Calculator },
-  { name: "Revenue Calculator", href: "/revenue-calculator", icon: TrendingUp },
-  { name: "Duration Calculator (MDE)", href: "/duration-calculator", icon: Calculator },
-  { name: "AOV Calculator", href: "/aov-calculator", icon: DollarSign },
-  { name: "Max Experiments", href: "/max-experiments", icon: Calculator, isBeta: true },
+const navigation = [
+  {
+    name: "CALCULATORS",
+    items: [
+      {
+        name: "Frequentist Calculator",
+        href: "/",
+        icon: Calculator,
+        description: "Statistical significance testing",
+      },
+      {
+        name: "Duration Calculator",
+        href: "/duration-calculator",
+        icon: Clock,
+        description: "Test duration planning",
+      },
+      {
+        name: "Revenue Calculator",
+        href: "/revenue-calculator",
+        icon: DollarSign,
+        description: "Revenue impact analysis",
+      },
+      {
+        name: "AOV Calculator",
+        href: "/aov-calculator",
+        icon: ShoppingCart,
+        description: "Average order value testing",
+      },
+      {
+        name: "Bayesian Calculator",
+        href: "/bayesian-calculator",
+        icon: BarChart3,
+        description: "Bayesian A/B testing",
+        badge: "BETA",
+      },
+      {
+        name: "Max Experiments",
+        href: "/max-experiments",
+        icon: Beaker,
+        description: "Concurrent testing limits",
+      },
+    ],
+  },
+  {
+    name: "ASSISTANTS",
+    items: [
+      {
+        name: "Method Assistant",
+        href: "/method-assistant",
+        icon: Brain,
+        description: "AI testing methodology",
+        badge: "AI",
+      },
+      {
+        name: "Claude Assistant",
+        href: "/claude-assistant",
+        icon: Sparkles,
+        description: "AI code generation",
+        badge: "NEW",
+      },
+    ],
+  },
+  {
+    name: "VISUALIZATION TOOLS",
+    items: [
+      {
+        name: "Sankey Diagram",
+        href: "/sankey-diagram",
+        icon: TrendingUp,
+        description: "User flow visualization",
+      },
+      {
+        name: "Waterfall Chart",
+        href: "/waterfall-chart",
+        icon: BarChart,
+        description: "Metric breakdown analysis",
+      },
+    ],
+  },
+  {
+    name: "RESOURCES",
+    items: [
+      {
+        name: "Documentation",
+        href: "/documentation",
+        icon: FileText,
+        description: "Complete guides",
+      },
+      {
+        name: "Testing Guides",
+        href: "/guides",
+        icon: HelpCircle,
+        description: "Best practices",
+      },
+      {
+        name: "API Status",
+        href: "/api-status",
+        icon: Activity,
+        description: "Service monitoring",
+      },
+    ],
+  },
 ]
-
-const diagramItems = [
-  { name: "Waterfall Chart", href: "/waterfall-chart", icon: BarChart },
-  { name: "Sankey Diagram", href: "/sankey-diagram", icon: GitBranch, isUpdated: true },
-]
-
-const assistantItems = [{ name: "Method Assistant", href: "/method-assistant", icon: Bot, isBeta: true }]
-
-const systemItems = [{ name: "Logs", href: "/logs", icon: Clipboard, isUpdated: true }]
 
 export function Sidebar() {
   const pathname = usePathname()
 
   return (
-    <div className="fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] bg-white shadow-lg transition-all duration-300 ease-in-out hover:w-64 group w-16">
-      <div className="h-full flex flex-col">
-        <div className="flex-grow overflow-y-auto">
-          <nav className="mt-5 px-2 space-y-2">
-            <span className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider opacity-0 group-hover:opacity-100 block mb-2">
-              Calculators
-            </span>
-            {calculatorItems.map((item) => (
-              <NavItem key={item.name} item={item} pathname={pathname} />
-            ))}
-
-            <Divider className="my-3 mx-4 group-hover:opacity-100 opacity-0 transition-opacity" />
-
-            <span className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider opacity-0 group-hover:opacity-100 block mb-2">
-              Diagrams
-            </span>
-            {diagramItems.map((item) => (
-              <NavItem key={item.name} item={item} pathname={pathname} />
-            ))}
-
-            <Divider className="my-3 mx-4 group-hover:opacity-100 opacity-0 transition-opacity" />
-
-            <span className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider opacity-0 group-hover:opacity-100 block mb-2">
-              Assistants
-            </span>
-            {assistantItems.map((item) => (
-              <NavItem key={item.name} item={item} pathname={pathname} />
-            ))}
-
-            <Divider className="my-3 mx-4 group-hover:opacity-100 opacity-0 transition-opacity" />
-
-            <span className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider opacity-0 group-hover:opacity-100 block mb-2">
-              System
-            </span>
-            {systemItems.map((item) => (
-              <NavItem key={item.name} item={item} pathname={pathname} />
-            ))}
-          </nav>
-        </div>
-        <div className="mt-auto p-4 border-t">
-          <span className="text-sm text-gray-500">v3.9</span>
-        </div>
+    <aside className="fixed left-0 top-16 z-40 h-[calc(100vh-4rem)] w-64 overflow-y-auto border-r bg-white">
+      <div className="p-4">
+        <nav className="space-y-6">
+          {navigation.map((section) => (
+            <div key={section.name}>
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">{section.name}</h3>
+              <ul className="space-y-1">
+                {section.items.map((item) => {
+                  const isActive = pathname === item.href
+                  return (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                          isActive ? "bg-blue-50 text-blue-700" : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
+                        )}
+                      >
+                        <item.icon className="h-4 w-4 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="truncate">{item.name}</span>
+                            {item.badge && (
+                              <Badge
+                                variant="secondary"
+                                className={cn(
+                                  "text-xs",
+                                  item.badge === "BETA" && "bg-purple-100 text-purple-800",
+                                  item.badge === "AI" && "bg-blue-100 text-blue-800",
+                                  item.badge === "NEW" && "bg-green-100 text-green-800",
+                                )}
+                              >
+                                {item.badge}
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 truncate">{item.description}</p>
+                        </div>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          ))}
+        </nav>
       </div>
-    </div>
+    </aside>
   )
 }
 
-// Also export as default for compatibility
 export default Sidebar
