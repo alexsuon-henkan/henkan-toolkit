@@ -2,7 +2,7 @@
 
 import { Sidebar } from "../../components/Sidebar"
 import { Footer } from "../../components/Footer"
-import ABTestCalculator from "../../components/ABTestCalculator"
+import ABTestCalculator from "@/components/ABTestCalculator"
 
 export default function ABTestingCalculatorPage() {
   // const { isOpen } = useSidebar()

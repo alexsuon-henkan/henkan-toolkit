@@ -1,5 +1,5 @@
 import { generateMetadata, SchemaOrgWebPage } from "@/components/SEO"
-import FrequentistCalculatorPage from "./FrequentistCalculatorPage"
+import ABTestCalculator from "@/components/ABTestCalculator"
 
 export const metadata = {
   ...generateMetadata({
@@ -17,15 +17,15 @@ export const metadata = {
   },
 }
 
-export default function Page() {
+export default function HomePage() {
   return (
-    <>
+    <div>
       <SchemaOrgWebPage
         title="A/B Test Calculator | Henkan Toolkit"
         description="Calculate your A/B test results using the frequentist approach with our powerful A/B Test Calculator."
         pathname="/"
       />
-      <FrequentistCalculatorPage />
-    </>
+      <ABTestCalculator />
+    </div>
   )
 }

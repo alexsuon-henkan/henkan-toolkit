@@ -1,39 +1,57 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { TopNav } from "@/components/TopNav"
+import { Inter, Libre_Baskerville } from "next/font/google"
+import { Toaster } from "sonner"
+import { Analytics } from "@vercel/analytics/react"
 import { Sidebar } from "@/components/Sidebar"
+import { TopNav } from "@/components/TopNav"
+import { Footer } from "@/components/Footer"
 import { AuthProvider } from "@/contexts/AuthContext"
-import { ThemeProvider } from "@/components/theme-provider"
+import { Suspense } from "react"
+import "styles/globals.css"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+})
+
+const libre_baskerville = Libre_Baskerville({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-libre",
+})
 
 export const metadata: Metadata = {
-  title: "Henkan Toolkit - A/B Testing Calculator & Tools",
-  description: "Professional A/B testing calculators and statistical analysis tools for data-driven decisions.",
+  title: "Henkan - A/B Testing Calculator Suite",
+  description:
+    "A comprehensive suite of A/B testing calculators, including frequentist, bayesian, duration, revenue, and AOV calculators.",
     generator: 'v0.dev'
 }
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
-          <AuthProvider>
-            <div className="min-h-screen bg-gray-50">
+    <html lang="en" className={`${inter.variable} ${libre_baskerville.variable}`}>
+      <body>
+        <AuthProvider>
+          <div className="flex min-h-screen flex-col">
+            <Suspense fallback={<div>Loading...</div>}>
               <TopNav />
-              <Sidebar />
-              <main className="pl-64 pt-16">
-                <div className="p-6">{children}</div>
-              </main>
-            </div>
-          </AuthProvider>
-        </ThemeProvider>
+              <div className="flex flex-1">
+                <Sidebar />
+                <main className="flex-1 pl-64 pt-16">
+                  <div className="p-8">{children}</div>
+                </main>
+              </div>
+              <Footer />
+            </Suspense>
+          </div>
+          <Toaster />
+          <Analytics />
+        </AuthProvider>
       </body>
     </html>
   )

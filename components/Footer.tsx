@@ -1,7 +1,9 @@
+import Link from "next/link"
+
 export function Footer() {
   return (
-    <footer className="bg-white px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      <div className="max-w-screen-xl mx-auto">
+    <footer className="bg-white px-4 sm:px-6 lg:px-8 py-8 sm:py-12 border-t bg-background">
+      <div className="max-w-screen-xl mx-auto container flex flex-col items-center justify-between gap-4 sm:flex-row">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 md:gap-12 lg:gap-16 mb-8">
           <section className="col-span-2 md:col-span-1">
             <h2 className="font-bold mb-4 text-sm tracking-wider uppercase">Calculators</h2>
@@ -91,10 +93,14 @@ export function Footer() {
           </section>
         </div>
 
-        <div className="border-t border-gray-200 pt-6 sm:pt-8 text-center">
-          <p className="text-xs sm:text-sm text-gray-500">
-            &copy; {new Date().getFullYear()} Henkan Toolkit. All rights reserved.
-          </p>
+        <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Henkan. All rights reserved.</p>
+        <div className="flex items-center gap-4">
+          <Link href="/privacy" className="text-sm text-muted-foreground hover:text-foreground">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="text-sm text-muted-foreground hover:text-foreground">
+            Terms of Service
+          </Link>
         </div>
       </div>
     </footer>

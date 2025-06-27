@@ -302,7 +302,7 @@ export default function ABTestCalculator() {
             <Button
               onClick={handleDemoMode}
               variant="outline"
-              className="border-[#4CAF50] text-[#4CAF50] hover:bg-[#4CAF50] hover:text-white"
+              className="border-[#4CAF50] text-[#4CAF50] hover:bg-[#4CAF50] hover:text-white bg-transparent"
             >
               <Wand2 className="w-4 h-4 mr-2" />
               Try A/B Test Demo
