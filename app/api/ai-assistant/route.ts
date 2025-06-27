@@ -21,22 +21,40 @@ The generated JavaScript should:
 4.  Be robust and include checks for existing elements where appropriate.
 5.  The generated code is a starting point. Add a comment at the top of the generated JavaScript: "// DEVELOPER REVIEW RECOMMENDED: This is an AI-generated starting point."
 
-Analyze the user's prompt and the provided screenshot to inform the styling and placement of the generated component. The final output must be only the JSON object.
+Analyze the user's prompt and the provided screenshot (if available) to inform the styling and placement of the generated component. The final output must be only the JSON object.
 `
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
     const userPrompt = formData.get("prompt") as string
-    const imageFile = formData.get("image") as File
+    const imageFile = formData.get("image") as File | null
 
-    if (!userPrompt || !imageFile) {
-      return NextResponse.json({ error: "Prompt and image are required." }, { status: 400 })
+    if (!userPrompt) {
+      return NextResponse.json({ error: "Prompt is required." }, { status: 400 })
     }
 
-    const buffer = Buffer.from(await imageFile.arrayBuffer())
-    const base64 = buffer.toString("base64")
-    const mimeType = imageFile.type
+    const userContent: Anthropic.MessageParam["content"] = [
+      {
+        type: "text",
+        text: userPrompt,
+      },
+    ]
+
+    if (imageFile) {
+      const buffer = Buffer.from(await imageFile.arrayBuffer())
+      const base64 = buffer.toString("base64")
+      const mimeType = imageFile.type
+
+      userContent.unshift({
+        type: "image",
+        source: {
+          type: "base64",
+          media_type: mimeType,
+          data: base64,
+        },
+      })
+    }
 
     const response = await anthropic.messages.create({
       model: "claude-3-5-sonnet-20240620",
@@ -45,20 +63,7 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: "user",
-          content: [
-            {
-              type: "image",
-              source: {
-                type: "base64",
-                media_type: mimeType,
-                data: base64,
-              },
-            },
-            {
-              type: "text",
-              text: userPrompt,
-            },
-          ],
+          content: userContent,
         },
       ],
     })
@@ -69,7 +74,6 @@ export async function POST(req: NextRequest) {
       throw new Error("Failed to get a valid response from AI.")
     }
 
-    // The response from Claude should be the JSON string directly
     const parsedResponse = JSON.parse(content)
     return NextResponse.json(parsedResponse)
   } catch (error) {

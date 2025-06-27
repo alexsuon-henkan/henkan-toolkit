@@ -41,23 +41,10 @@ export function AIAssistant() {
     }
   }
 
-  const resetForm = () => {
-    setPrompt("")
-    setImage(null)
-    setImagePreview(null)
-    setError(null)
-    setGeneratedCode(null)
-    setIsLoading(false)
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!prompt) {
       setError("Please enter a description for your banner or modal.")
-      return
-    }
-    if (!image) {
-      setError("Please upload a screenshot.")
       return
     }
 
@@ -67,7 +54,9 @@ export function AIAssistant() {
 
     const formData = new FormData()
     formData.append("prompt", prompt)
-    formData.append("image", image)
+    if (image) {
+      formData.append("image", image)
+    }
 
     try {
       const res = await fetch("/api/ai-assistant", {
@@ -82,7 +71,6 @@ export function AIAssistant() {
           const errorJson = JSON.parse(errorText)
           errorMsg = errorJson.error || errorMsg
         } catch (e) {
-          // It wasn't JSON, so the raw text is the error.
           errorMsg = errorText || errorMsg
         }
         throw new Error(errorMsg)
@@ -125,7 +113,8 @@ export function AIAssistant() {
         <CardHeader>
           <CardTitle>1. Describe Your Component</CardTitle>
           <CardDescription>
-            Upload a screenshot of the page and describe the banner or modal you want to create.
+            Describe the banner or modal you want to create. Uploading a screenshot for context is optional but
+            recommended.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -133,7 +122,7 @@ export function AIAssistant() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="file-upload" className="block text-sm font-medium text-gray-700 mb-2">
-                  Screenshot
+                  Screenshot (Optional)
                 </label>
                 <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                   <div className="space-y-1 text-center">
@@ -182,7 +171,7 @@ export function AIAssistant() {
               </div>
               <div className="flex flex-col">
                 <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
+                  Description <span className="text-red-500">*</span>
                 </label>
                 <Textarea
                   id="prompt"
