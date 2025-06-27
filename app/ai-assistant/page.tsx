@@ -1,11 +1,9 @@
-import { AIAssistant } from "@/components/AIAssistant"
-import { Toaster } from "@/components/ui/toaster"
+import AIAssistant from "@/components/ai-assistant"
 
 export default function AIAssistantPage() {
   return (
-    <div className="container mx-auto py-10">
+    <main className="container mx-auto py-10">
       <AIAssistant />
-      <Toaster />
-    </div>
+    </main>
   )
 }

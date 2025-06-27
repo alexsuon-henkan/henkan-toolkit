@@ -1,56 +1,45 @@
-import { type NextRequest, NextResponse } from "next/server"
-import Anthropic from "@anthropic-ai/sdk"
-
-if (!process.env.ANTHROPIC_API_KEY) {
-  throw new Error("ANTHROPIC_API_KEY is not set in the environment variables")
-}
+import { NextResponse, type NextRequest } from "next/server"
+import { Anthropic } from "@anthropic-ai/sdk"
+import { Buffer } from "node:buffer"
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 })
 
-const systemPrompt = `You are an expert front-end developer specializing in creating JavaScript code for website banners and modals. Your primary task is to generate a single JSON object containing two keys: "explanation" and "javascript".
+const systemPrompt = `
+You are an expert front-end developer who produces JavaScript for informational banners
+and interactive modals (countdowns, newsletter pop-ups, etc.).
 
-- "explanation": A brief, clear explanation of what the JavaScript code does and how to use it.
-- "javascript": The raw JavaScript code. This code should be immediately executable in a browser's developer console. It must not be wrapped in markdown backticks or any other formatting.
+Return ONLY a JSON object with exactly these keys:
+  "javascript" – a single-line JSON string containing raw JavaScript (no backticks).
+  "explanation" – short human explanation (2-4 sentences).
 
-The generated JavaScript should:
-1.  Be self-contained and not require external libraries.
-2.  Manipulate the DOM to create, style, and inject the requested banner or modal.
-3.  Include basic styling within the script (e.g., setting element.style properties) to ensure the component is visually acceptable.
-4.  Be robust and include checks for existing elements where appropriate.
-5.  The generated code is a starting point. Add a comment at the top of the generated JavaScript: "// DEVELOPER REVIEW RECOMMENDED: This is an AI-generated starting point."
-
-Analyze the user's prompt and the provided screenshot (if available) to inform the styling and placement of the generated component. The final output must be only the JSON object.
+The code must be ready to paste into the browser console and should add/removes DOM nodes cleanly.
+Do NOT wrap any value in markdown fences.
+Add at the very top of the JS a comment:
+// DEVELOPER REVIEW RECOMMENDED: AI-generated starter.
 `
 
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData()
-    const userPrompt = formData.get("prompt") as string
-    const imageFile = formData.get("image") as File | null
+    const form = await req.formData()
+    const prompt = form.get("prompt") as string | null
+    const imageFile = form.get("image") as File | null
 
-    if (!userPrompt) {
+    if (!prompt) {
       return NextResponse.json({ error: "Prompt is required." }, { status: 400 })
     }
 
-    const userContent: Anthropic.MessageParam["content"] = [
-      {
-        type: "text",
-        text: userPrompt,
-      },
-    ]
+    const userContent: any[] = [{ type: "text", text: prompt }]
 
     if (imageFile) {
-      const buffer = Buffer.from(await imageFile.arrayBuffer())
-      const base64 = buffer.toString("base64")
-      const mimeType = imageFile.type
-
+      const arrayBuffer = await imageFile.arrayBuffer()
+      const base64 = Buffer.from(arrayBuffer).toString("base64")
       userContent.unshift({
         type: "image",
         source: {
           type: "base64",
-          media_type: mimeType,
+          media_type: imageFile.type,
           data: base64,
         },
       })
@@ -68,22 +57,32 @@ export async function POST(req: NextRequest) {
       ],
     })
 
-    // @ts-ignore - SDK types might not be fully updated for content blocks
-    const content = response.content[0]?.text
-    if (!content) {
-      throw new Error("Failed to get a valid response from AI.")
+    let content = (response.content[0] as any)?.text?.trim() || ""
+
+    // Remove ```json or ``` fences if present
+    if (content.startsWith("```")) {
+      content = content
+        .replace(/^```[\w]*\n?/, "")
+        .replace(/```$/, "")
+        .trim()
     }
 
-    const parsedResponse = JSON.parse(content)
-    return NextResponse.json(parsedResponse)
-  } catch (error) {
-    console.error("AI Assistant API error:", error)
-    let errorMessage = "An unknown error occurred."
-    if (error instanceof Anthropic.APIError) {
-      errorMessage = `Anthropic API Error: ${error.status} ${error.name} - ${error.message}`
-    } else if (error instanceof Error) {
-      errorMessage = error.message
+    // Attempt to parse; if it fails, try to recover common backtick-wrapped code
+    let parsed
+    try {
+      parsed = JSON.parse(content)
+    } catch {
+      // Replace backtick-wrapped JS value
+      content = content.replace(
+        /"javascript"\s*:\s*`([\s\S]*?)`/,
+        (_match, p1) => `"javascript":"${p1.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n")}"`,
+      )
+      parsed = JSON.parse(content)
     }
-    return NextResponse.json({ error: errorMessage }, { status: 500 })
+
+    return NextResponse.json(parsed)
+  } catch (err) {
+    console.error(err)
+    return NextResponse.json({ error: (err as Error).message || "Internal server error" }, { status: 500 })
   }
 }
