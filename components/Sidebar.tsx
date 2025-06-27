@@ -101,3 +101,6 @@ const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
 }
 
 export default Sidebar
+
+// Named export for compatibility
+export { Sidebar }
